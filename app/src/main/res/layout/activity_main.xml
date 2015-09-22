@@ -1,0 +1,91 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+
+    <!--TextView
+        android:text="@string/classify_pic_str"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" /-->
+
+    <ImageView
+        android:id="@+id/imageClassifiedView_id"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/image_classified_desc"
+        android:layout_margin="5dp"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/classificationReceivedText_id"
+        android:text="@string/classification_received_str"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_below="@id/imageClassifiedView_id"/>
+
+    <Button
+        android:id="@+id/request_classification_button_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:text="@string/request_classification_button_str"
+        android:contentDescription="@string/request_classification_button_desc"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button"
+        android:textAllCaps="false"
+        android:textSize="16dp"
+        android:padding="10dp"
+        android:textColor="#ffffff"
+        android:layout_margin="5dp"
+        android:onClick="uploadImage"/>
+
+    <LinearLayout
+        android:id="@+id/requestClassificationLayout_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:scaleType="fitCenter"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/request_classification_button_id">
+
+        <!--TextView
+            android:text="@string/classify_pic_request_str"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" /-->
+
+        <Button
+            android:id="@+id/choose_image_button_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_image_button_str"
+            android:contentDescription="@string/choose_image_button_desc"
+            android:background="@drawable/button"
+            android:textAllCaps="false"
+            android:textSize="16dp"
+            android:padding="10dp"
+            android:textColor="#ffffff"
+            android:layout_margin="5dp"
+            android:onClick="loadImagefromGallery"/>
+
+        <Button
+            android:id="@+id/take_image_button_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/take_image_button_str"
+            android:contentDescription="@string/take_image_button_desc"
+            android:background="@drawable/button"
+            android:textAllCaps="false"
+            android:textSize="16dp"
+            android:padding="10dp"
+            android:textColor="#ffffff"
+            android:layout_margin="5dp"
+            android:onClick="takeNewImage"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
