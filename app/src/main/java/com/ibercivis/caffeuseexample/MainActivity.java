@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -71,6 +72,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String JPEG_FILE_SUFFIX = ".jpg";
     private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 
+    // Connection definition
+    private static final int WIFI_CON = 0;
+    private static final int DATA_CON = 1;
+    private static final int NO_NETWORK = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
+   @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -135,6 +141,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Check the type of connectivity
+     *
+     * @return WIFI_CON (=0) if wifi connection, DATA_CON(=1) if data connection, NO_NETWORK(=2) if
+     * no network
+     *
+     */
+    public int checkStatus() {
+        final ConnectivityManager connMgr = (ConnectivityManager)
+                this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        final android.net.NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        final android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+        if (wifi.isConnectedOrConnecting ()) {
+            return WIFI_CON;
+        } else if (mobile.isConnectedOrConnecting ()) {
+            return DATA_CON;
+        } else {
+            return NO_NETWORK;
+        }
+    }
+
+    /**
      * Start the intent to choose a stored image in the device
      *
      * @param view Current view object, not null
@@ -144,6 +172,17 @@ public class MainActivity extends AppCompatActivity {
         // Create intent to Open Image applications like Gallery, Google Photos
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        // Check the type of connection
+        if (checkStatus() == DATA_CON) {
+            // Connection is via data (3G), so the image is resized in order to make the
+            // request faster
+            galleryIntent.putExtra("outputX", 400);
+            galleryIntent.putExtra("outputY", 400);
+            galleryIntent.putExtra("aspectX", 1);
+            galleryIntent.putExtra("aspectY", 1);
+            galleryIntent.putExtra("scale", true);
+        }
 
         // Start the Intent
         startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
@@ -305,6 +344,22 @@ public class MainActivity extends AppCompatActivity {
             values.put(MediaStore.Images.Media.DESCRIPTION,"Image captured by camera");
 
             imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+            // Add extras to let the user crop the image so it is sent the most significant part
+            // of the picture
+            takePictureIntent.putExtra("crop", "true");
+
+            // Check the type of connection
+            if (checkStatus() == DATA_CON) {
+                // Connection is via data (3G), so the image is resized in order to make the
+                // request faster
+                takePictureIntent.putExtra("outputX", 400);
+                takePictureIntent.putExtra("outputY", 400);
+            }
+
+            takePictureIntent.putExtra("aspectX", 1);
+            takePictureIntent.putExtra("aspectY", 1);
+            takePictureIntent.putExtra("scale", true);
 
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         } catch (IOException e) {
